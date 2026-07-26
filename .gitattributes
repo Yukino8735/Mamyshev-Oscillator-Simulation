@@ -1,0 +1,25 @@
+* text=auto
+
+# Preserve byte-for-byte snapshots of the historical project, simulation
+# engines, archived data, and exported results.
+archive/** -text
+code/simulation_engine/** -text
+data/** -text
+results/** -text
+third_party/** -text
+
+# Normalize only the maintained project entry points and documentation.
+*.md text eol=lf
+.gitignore text eol=lf
+code/setup_mamyshev_project.m text eol=lf
+code/ring_cavity/**.m text eol=lf
+code/linear_cavity/**.m text eol=lf
+
+*.asv binary
+*.fig binary
+*.gif binary
+*.jpg binary
+*.mat binary
+*.pdf binary
+*.png binary
+*.xlsx binary

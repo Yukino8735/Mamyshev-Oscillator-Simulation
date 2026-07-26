@@ -1,0 +1,8 @@
+Material: fused silica
+Fiber type: step
+NA: 0.08000
+diameter:  10.00um
+
+Nx: 800
+spatial_window: 100um
+
