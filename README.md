@@ -64,9 +64,6 @@ run(fullfile(project_root, 'code', 'linear_cavity', ...
     'scans', 'scan_linear_FBG_mamyshev.m'));
 ```
 
-新生成的数据会写入 `data/*_generated/`，新图会写入
-`results/*_generated/`，不会覆盖整理时保留的历史结果。
-
 ## 两套模型
 
 环形腔模型以 Haig 等人的全光纤环形 Mamyshev 振荡器为结构参考，代码采用
