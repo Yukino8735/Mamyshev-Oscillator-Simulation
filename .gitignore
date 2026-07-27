@@ -6,7 +6,9 @@ data/ring_cavity/generated/
 data/linear_cavity/evolution_generated/
 data/linear_cavity/raw_scans_generated/
 data/linear_cavity/trend_guided_generated/
+data/linear_cavity/processed_raw/
 
 results/ring_cavity/generated/
 results/linear_cavity/evolution_generated/
 results/linear_cavity/trend_guided_generated/
+results/linear_cavity/processed_raw/

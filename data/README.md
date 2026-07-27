@@ -21,12 +21,6 @@
 - 历史 CSV 中的 `pulse_duration_ps` 是未压缩时域宽度，约 1.3-1.7 ps；
   `peak_power_W` 也是未压缩峰值。
 
-## 线性腔原始结果后处理
-
-`linear_cavity/processed_raw/` 保留了对原始 CSV 的整理结果。失败的增益光纤
-半步点被插值补齐，带宽扫描只保留成功区间。原项目没有保留生成这些 CSV 的
-脚本，因此这里作为历史派生数据，不视为原始仿真输出。
-
 ## 线性腔趋势数据
 
 `linear_cavity/trend_guided/` 来自原脚本明确标注的
