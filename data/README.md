@@ -9,18 +9,6 @@
   对应数值写在 `code/ring_cavity/analysis/plot_*_dependence.m` 的数组中，属于
   历史记录/后处理值。
 
-## 线性腔原始扫描
-
-`linear_cavity/raw_scans/` 是原扫描脚本直接写出的 CSV/MAT：
-
-- 泵浦与 FBG 偏移扫描均有完整成功记录。
-- LR-FBG 带宽扫描只有 0.75-2.0 nm 成功；0.5 nm 和 2.25-4.0 nm 记录为用户取消
-  的进度条错误。
-- 增益光纤长度扫描中，0.05 m 的奇数半步与 0.1 m 保存周期不整除，因此多点
-  失败；0.7、0.8、…、1.4 m 等整 0.1 m 点成功。
-- 历史 CSV 中的 `pulse_duration_ps` 是未压缩时域宽度，约 1.3-1.7 ps；
-  `peak_power_W` 也是未压缩峰值。
-
 ## 线性腔趋势数据
 
 `linear_cavity/trend_guided/` 来自原脚本明确标注的

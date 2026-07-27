@@ -11,7 +11,7 @@ GMMNLSE 仿真引擎、历史数据与成图、毕业论文、两篇主要参考
 | `code/ring_cavity/` | 环形腔主程序、扫描与绘图脚本 |
 | `code/linear_cavity/` | 线性 FBG 腔主程序、扫描与绘图脚本 |
 | `code/simulation_engine/GMMNLSE/` | 本项目实际依赖的定制 GMMNLSE 代码 |
-| `data/` | 原始扫描、插值后处理、趋势数据和演化 MAT 文件 |
+| `data/` | 保留的历史数据及其来源说明 |
 | `results/` | 已导出的论文图、PDF 和 PNG |
 | `docs/thesis/` | 毕业论文 |
 | `docs/references/` | 环形腔与线性腔参考文献 |
