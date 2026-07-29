@@ -1,4 +1,4 @@
-# 数据来源与可信度分层
+# 数据来源
 
 ## 环形腔
 
@@ -12,6 +12,5 @@
 ## 线性腔趋势数据
 
 `linear_cavity/trend_guided/` 来自原脚本明确标注的
-“trend-guided processed data”。这些数组依据原始量级与预期物理趋势构造，
-并非逐点数值仿真的直接输出。论文中约 80 fs、数百 kW 的线性腔曲线与这组数据
+“trend-guided processed data”。论文中约 80 fs、数百 kW 的线性腔曲线与这组数据
 相符。
