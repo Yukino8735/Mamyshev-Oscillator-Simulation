@@ -2,6 +2,8 @@
 
 ## Current: bounded full-pipeline check passed; authorized code release
 
+Both public repositories were pushed and read back: main project source release `e2926392f8a772f138b02a97cf5ce3b525fb7bf6` is on `main` and `feature/mamyshev-ml-mvp`; Demo `c9ac9bfafaaf6f1481b22749a82bd6f918d7be6b` is on `main`. No PR is pending. A docs-only receipt follow-up follows; its final commit and remote equality are recorded in the independent publication receipt. No additional computation or deployment is authorized.
+
 2026-10-11. The current publishing instruction and the owner's explicit
 follow-up authorize publication of project-owned pipeline code with public
 MATLAB live execution marked **blocked**. Four Cornell engine modifications

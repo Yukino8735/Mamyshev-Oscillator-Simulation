@@ -5,6 +5,33 @@
 此范围不等于“公开 clone 后全部 MATLAB 无条件可运行”。原历史审批文字保持原样；
 当前授权只适用于本次审核过的代码/最小模型资产，不包括数据或 Cloud 部署。
 
+## 实际发布结果（不是准备清单）
+
+| 仓库 | 实际分支/结果 | 已重新读取的源码发布commit |
+|---|---|---|
+| [主项目](https://github.com/Yukino8735/Mamyshev-Oscillator-Simulation) | 功能分支已推送；main普通快进成功；PR无 | `e2926392f8a772f138b02a97cf5ce3b525fb7bf6` |
+| [Demo](https://github.com/Yukino8735/mamyshev-design-explorer) | 新公开仓库main已创建并推送；PR无 | `c9ac9bfafaaf6f1481b22749a82bd6f918d7be6b` |
+
+GitHub API实际main/功能分支SHA均与本地一致。主仓库全部1274个blob、Demo全部29个blob
+与本地提交树一致；又下载核对了主README/训练CLI/训练桥/导出器及Demo README/app/
+预测入口/manifest的内容。主仓库从旧远程基线到发布commit没有修改data/results/archive/
+simulation_engine/third_party；Demo没有任何额外文件或主.git历史。不是仅以push退出0判断。
+
+这次附记与README双向链接作为一次独立**仅文档补记**提交，保持上述源码发布commit
+不变。补记自身最终commit、两分支最终SHA以及再次远程核查记入本地
+`reports/local/full_pipeline_publish_001/publication_receipt.json`，避免自身hash循环。
+部署副本不因报告自身变化重新导出，原manifest的导出时身份与dirty说明保持真实。
+
+截至首次完整远程读回，受控Python计算计费 **15.523827秒**，
+Git/网络步骤计费 **20.603880秒**；每个进程均远低于120秒。
+这些为现有监控器子进程外部墙钟，不含人工/工具等待和Conda外层启动；最终文档、
+保存检查及远程复核的额外计费并入最终publication_receipt/budget_ledger，全部失败亦计入。
+唯一失败状态是开始时查询尚不存在Demo仓库的预期“repository not found”；没有测试、
+拟合、提交或推送失败。没有自动重试计算或重新fit。
+
+公开代码已完成，浏览器视觉仍pending，Cloud未开始，网站没有已确认Live URL。
+本批在文档补记与最终保存检查完成后停止。
+
 ## 实际功能与证据
 
 | 环节 | 实际入口/源码 | 本批证据与边界 |

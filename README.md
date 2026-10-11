@@ -16,6 +16,8 @@ not 10,000 GMMNLSE runs. Its full-solver validation remains pending.
 
 ## Demo showcase
 
+Published code: [complete project](https://github.com/Yukino8735/Mamyshev-Oscillator-Simulation) · [lightweight single-10k Demo](https://github.com/Yukino8735/mamyshev-design-explorer). Both default branches were remotely verified after publication. The public MATLAB live route remains blocked as described below; GitHub code publication is separate from website deployment.
+
 **[Interactive demo & website status](docs/DEMO_SHOWCASE.md)** ·
 [Run locally](#run-the-local-interactive-demo) ·
 [Real-simulation validation roadmap](docs/REAL_SIMULATION_VALIDATION_PLAN.md)
