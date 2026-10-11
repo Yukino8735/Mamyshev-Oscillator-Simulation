@@ -1,0 +1,22 @@
+{
+  "schema_version": "mamyshev_main_demo_sync_v1",
+  "presentation_revision": "single_10k_001",
+  "model_id": "demo_10k_v1",
+  "model_sha256": "9885e8f258fa10de0a69844b70fa72242fcc64267d9db1e6c07dd4bd4609b6d0",
+  "deployment_manifest_sha256": "cbf2cb69f1e0aa9d7bbf03e9dacc3fa8f0c57d42c2c4f127e583118963597f93",
+  "base_git_commit": "489bf4242f9b5266d47f8892840a24af66931ff0",
+  "sync_date": "2026-10-11",
+  "full_backend_retained": true,
+  "research_v42_assets_retained": true,
+  "git_commit_created": false,
+  "publication_performed": false,
+  "copied_runtime_sha256": {
+    "demo/app.py": "7f096ce1efa6e36a879a1cf654d3a8be7a9ba147552aad1e62dc3f7c038e6c5d",
+    "demo/predict.py": "b2379d3f046972021f99c9bf6793d8d6979d60b3cdf8db9e09871946b1c83946",
+    "demo/ui_logic.py": "b6a9745aef5b414253436a4bdd8e8fe734dd5d4968e701709c16b58e4a87b82a",
+    "demo/ui_presentation.py": "bac8b6e63974e1b1b0586a33c12be4650b32202da3759ac1a2029917d96d05a2",
+    "demo/assets/models/catalog.json": "d49e4171b29d0fa6c39a15968994b9753da42a9d17414ca43ec1e783c00aa78e",
+    "src/mamyshev_ml/demo_inference.py": "86e68c07c87d6fede870b596f2a4ddd983209d0040b51b3e917232421f7ccffb",
+    ".streamlit/config.toml": "963c54d6732f16c775f41197f2119e653ff88383a2a2d84673d7e876621af758"
+  }
+}

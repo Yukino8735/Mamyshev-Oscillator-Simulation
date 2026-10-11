@@ -1,0 +1,293 @@
+{
+  "protocol_id": "targeted_accuracy_v4_1_001",
+  "frozen_utc": "2026-09-28T05:17:36.530475+00:00",
+  "diagnosis_path": "reports/local/accuracy_v4_1_001/diagnostics/diagnostic_summary.json",
+  "diagnosis_sha256": "b2c96f4a2d4122e1de321fe12cb8c8f52907c8c1dbdb224ac76662ec41044d02",
+  "source_kind": "repository_guided_synthetic",
+  "features": [
+    "pump_power_W",
+    "filter_offset_nm",
+    "filter2_bw_nm",
+    "gain_length_m"
+  ],
+  "targets": [
+    "compressed_energy_nJ",
+    "compressed_duration_fs",
+    "compressed_peak_power_MW"
+  ],
+  "models": {
+    "B0": {
+      "n": 512,
+      "fit": false,
+      "model_sha256": "4e0097e404281b3b8eaee075fb1d7f6d7db3e4a817daa823ac04bc5cfd263935"
+    },
+    "B1": {
+      "n": 1024,
+      "fit": true,
+      "training": "V4 order11 first1024"
+    },
+    "B2": {
+      "n": 1024,
+      "fit": true,
+      "training": "V4 order11 first512 plus new train512"
+    }
+  },
+  "family": "spline_interactions",
+  "hyperparameters": {
+    "n_knots": 16,
+    "degree": 3,
+    "knots": "uniform",
+    "interaction_polynomial_degree": 4,
+    "alpha": 0.1,
+    "log_targets": true,
+    "knots_source": "training input extrema only; no historic curve knots or generator values"
+  },
+  "order": 11,
+  "role_quotas": {
+    "train": {
+      "slice": 128,
+      "near_slice": 128,
+      "outer_faces": 64,
+      "corners": 64,
+      "reference_core": 64,
+      "reference_expanded": 64
+    },
+    "dev": {
+      "slice": 128,
+      "near_slice": 128,
+      "outer_faces": 128,
+      "corners": 128
+    },
+    "calibration": {
+      "slice": 128,
+      "near_slice": 128,
+      "outer_faces": 128,
+      "corners": 128,
+      "reference_core": 256,
+      "reference_expanded": 256
+    },
+    "test": {
+      "slice": 256,
+      "near_slice": 256,
+      "outer_faces": 256,
+      "corners": 256,
+      "reference_core": 512,
+      "reference_expanded": 512
+    }
+  },
+  "sampling_seeds": {
+    "train": 41011,
+    "dev": 41022,
+    "calibration": 41033,
+    "test": 41044
+  },
+  "max_sampling_proposals_per_group": 100000,
+  "max_new_unique_oracle_designs": 4096,
+  "oracle_seed": 0,
+  "metrics_protocol": {
+    "protocol_id": "accuracy_first_v4_2",
+    "thresholds_status": "user-task proposals fixed before pilot; not optical industry standards",
+    "features": [
+      "pump_power_W",
+      "filter_offset_nm",
+      "filter2_bw_nm",
+      "gain_length_m"
+    ],
+    "targets": [
+      "compressed_energy_nJ",
+      "compressed_duration_fs",
+      "compressed_peak_power_MW"
+    ],
+    "training_sizes": [
+      256,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "training_seeds": [
+      11,
+      22,
+      33
+    ],
+    "tolerances": {
+      "compressed_energy_nJ": {
+        "absolute": 2.0,
+        "relative": 0.03
+      },
+      "compressed_duration_fs": {
+        "absolute": 1.0,
+        "relative": 0.03
+      },
+      "compressed_peak_power_MW": {
+        "absolute": 0.05,
+        "relative": 0.05
+      }
+    },
+    "tolerance_rule": "abs(prediction-truth) <= max(absolute, relative*abs(truth))",
+    "acceptance": {
+      "each_target_pass_rate": 0.95,
+      "joint_all3_pass_rate": 0.9,
+      "each_core_expanded_target_pass_rate": 0.9,
+      "confirm_selected_size_all_three_train_orders": true,
+      "wilson95_lower_bounds_are_reported_not_silently_assumed": true
+    },
+    "selection": "At each size fit fixed families with train order11. Confirm gate-passing family at same size on train orders22/33. Smallest size passing every gate for all3 orders; tie by mean validation tolerance-normalized RMSE. Production fit uses order11. Do not refit after calibration. If none passes through4096, keep best validation model and accuracy_target_met=false.",
+    "metrics": [
+      "MAE_original_units",
+      "RMSE_original_units",
+      "R2",
+      "median_relative_error",
+      "P90_relative_error",
+      "P95_relative_error",
+      "max_absolute_error",
+      "pass_rate_tolerance",
+      "joint_pass_rate",
+      "Wilson95_pass_rate_interval",
+      "median_and_P95_tolerance_ratio"
+    ],
+    "relative_error_floor": {
+      "compressed_energy_nJ": 1e-12,
+      "compressed_duration_fs": 1e-12,
+      "compressed_peak_power_MW": 1e-12
+    },
+    "groups": [
+      "all",
+      "historical_core",
+      "expanded_proposal",
+      "each_parameter_equal_width_4bins",
+      "duration_truth_38_to_42_fs",
+      "energy_truth_95_to_105_nJ"
+    ],
+    "small_group_minimum": 50,
+    "uncertainty": {
+      "method": "split_conformal_joint_max_absolute_log_residual",
+      "alpha": 0.05,
+      "score": "max_j abs(log(y_j)-log(yhat_j))",
+      "quantile_rank": "ceil((n_cal+1)*(1-alpha))",
+      "interval": "[prediction*exp(-q), prediction*exp(q)] for all3",
+      "claims": "marginal joint coverage only for exchangeable calibration/test from same reference distribution; not conditional, per-design, boundary or adaptive-search guarantees"
+    },
+    "models": {
+      "ridge2": {
+        "degree": 2,
+        "alpha": 1.0,
+        "log_targets": true
+      },
+      "hist_gb": {
+        "max_iter": 300,
+        "max_leaf_nodes": 31,
+        "learning_rate": 0.08,
+        "min_samples_leaf": 10,
+        "l2_regularization": 0.1,
+        "early_stopping": false,
+        "log_targets": true
+      },
+      "spline_interactions": {
+        "n_knots": 16,
+        "degree": 3,
+        "knots": "uniform",
+        "interaction_polynomial_degree": 4,
+        "alpha": 0.1,
+        "log_targets": true,
+        "knots_source": "training input extrema only; no historic curve knots or generator values"
+      }
+    },
+    "candidate_policy": "20k supplied X only; no oracle labels computed until queried; split guards exclude all supervised/parity/legacy-test IDs",
+    "pilot_policy": "Only train/validation. No calibrated intervals or final test/challenge model scores in data-creation pilot.",
+    "real_solver_evaluation": "not_measured; synthetic accuracy is not GMMNLSE accuracy; solver_emulation needs distinct labeled source and frozen protocol",
+    "protocol_history": "Error tolerances fixed before initial pilot. Spline-interaction family added after development-only comparison; this is model development, not a blind preregistered model comparison. No final test/calibration/challenge model scores used.",
+    "exploratory_models": {
+      "rbf_svr": {
+        "C": 100.0,
+        "epsilon": 0.002,
+        "gamma": 4.0,
+        "tol": 0.001,
+        "cache_size_MB": 256,
+        "log_targets": true,
+        "input_scaling": "fixed_domain_to_unit_box"
+      }
+    },
+    "model_order": [
+      "ridge2",
+      "spline_interactions",
+      "hist_gb"
+    ]
+  },
+  "geometry": "V4 geometry; X-only independent role/group SHA256-seeded streams; continuous coordinates 6 decimals, length integer tenths; endpoint faces balanced over 8 faces; 16 corner neighborhoods, outer5%; expanded excludes core",
+  "exclusions": "All available old labeled X, legacy canonical IDs, anchors, queried search X and candidate20k; every new role mutually disjoint by canonical X-derived ID",
+  "development_gate": {
+    "reference_all_each": 0.95,
+    "reference_all_joint": 0.9,
+    "reference_core_expanded_each": 0.9,
+    "special_each": 0.95,
+    "special_joint": 0.9
+  },
+  "selection_rule": "Only ALL gates pass; smallest n; equal n lowest equal-six-group mean target tolerance-normalized RMSE; deterministic B0/B1/B2 tie order",
+  "tie_groups_equal_weights": [
+    "historical_core",
+    "expanded_proposal",
+    "slice",
+    "near_slice",
+    "outer_faces",
+    "corners"
+  ],
+  "no_pass_action": "Save best diagnostic candidate; no calibration/test queries, no extra fits or samples",
+  "calibration": {
+    "method": "existing joint max absolute log residual",
+    "alpha": 0.05,
+    "fit_changes": false
+  },
+  "final_evaluation_models": [
+    "frozen_selected",
+    "B0"
+  ],
+  "final_evaluation_attempts": 1,
+  "calibration_test_weights": {
+    "reference_core": 0.25,
+    "reference_expanded": 0.25,
+    "slice": 0.125,
+    "near_slice": 0.125,
+    "outer_faces": 0.125,
+    "corners": 0.125
+  },
+  "final_gate": "Same reference/special development thresholds; no tuning after failure",
+  "prediction_checks": {
+    "atol": 1e-10,
+    "rtol": 1e-10
+  },
+  "budget": {
+    "engineering_s": 300,
+    "ml_s": 900,
+    "threads": 2,
+    "MATLAB_starts": 0,
+    "GMMNLSE_attempts": 0
+  },
+  "sources": {
+    "src/mamyshev_ml/v41_experiment.py": "3c58756aef0574a01a1670a9c55e9c886f87b65986b2475a266325bc7ff52c3a",
+    "src/mamyshev_ml/v41_sampling.py": "b6d255221b12ca9ccf74595a226fe0f558e4c2032024d172a256c0a669458f8e",
+    "src/mamyshev_ml/v4_evaluators.py": "b3915a764144638edb48ba0bab437cf0e90d648caa0eee4f244c9535e1a13efa",
+    "src/mamyshev_ml/v4_store.py": "63fa1327f488a145a61aca842cca8680943025d9b1bc6c57bd58a2107042dfed",
+    "src/mamyshev_ml/model_usage.py": "f3563d98fc63e58ed7c14e547d39abd51123a448280f79178ba0bc08d6f3bf23",
+    "scripts/run_v41.py": "84aba285ba740bdacc5b37e5ec9d79b43c3d3f89e102f21a64b9fe4419769d05",
+    "scripts/run_v4_budget.py": "1200960347af566a92c4d0e5986070d257b40abbb9985fa55158ae5ac233461e",
+    "src/mamyshev_ml/v4_ml.py": "b3b6f5b5bb186cbe5c6a068803623083fbc8896e16f72c742adbe76e3f9509e9",
+    "src/mamyshev_ml/v4_roles.py": "bd25973117bf57107b609952d65f08f94a8ae796c5a1993b5527da0d0fa04e4e",
+    "mamyshev_accuracy_v4/reference/models_v4.py": "46f9779b878d195b601930446cce3ec5335f694ef219f28c2ae728a353590b11",
+    "mamyshev_accuracy_v4/reference/metrics_v4.py": "4eb88a466c419098aa7ae8a1ff53b02fdfdeae04c1a1ed2c3375003d6dc0e7ac"
+  },
+  "unchanged_package_hashes": {
+    "reference/oracle.py": "98df4bade605db85f2d384f8bfebe69ceb4716120f729d3d460819ead25ade8e",
+    "configs/generator_recipe.json": "4cc26ad801213d01554d96846a7d10f5d6d3260c07e099e8df9441c357d4c770",
+    "configs/domain.json": "66802d60ab841a6ca5f7530147c80cbd465936ccef8b82b411f38d7a126ba668",
+    "configs/accuracy_protocol.json": "89869bf5f9702a2f27f8b4d60199c1759bfcfb0a2beaa457a48566ae146562ff",
+    "data/training_orders.json": "73d3617cc4d3030e9d45902355b3eef4edefb876116d26ba6fc1913074f28feb"
+  },
+  "old_selection_sha256": "2880caa04001fb834e17f2cf7391d7a61fdc08ac3a07693b51a109324332e0ca",
+  "B0_training_ids_match_order11_first512": true,
+  "scientific_limits": {
+    "physical_state": "undetermined",
+    "numerical_validation": "not_verified",
+    "eligible_as_validated_training_truth": false
+  }
+}

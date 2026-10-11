@@ -1,0 +1,326 @@
+{
+  "benchmark_id": "mamyshev_repository_guided_synthetic_v3",
+  "schema_version": "sample_efficient_v3",
+  "source_kind": "repository_guided_synthetic",
+  "physical_validation": "not_verified",
+  "warning": "Not outputs of the original GMMNLSE solver. Historical curves determine normalized 1D trends only. Cross-effects and extrapolation are explicit assumptions. No waveform or stability truth is generated.",
+  "feature_names": [
+    "pump_power_W",
+    "filter_offset_nm",
+    "filter2_bw_nm",
+    "gain_length_m"
+  ],
+  "target_names": [
+    "compressed_energy_nJ",
+    "compressed_duration_fs",
+    "compressed_peak_power_MW"
+  ],
+  "domain": {
+    "pump_power_W": [
+      2,
+      10
+    ],
+    "filter_offset_nm": [
+      2,
+      16
+    ],
+    "filter2_bw_nm": [
+      0.5,
+      8
+    ],
+    "gain_length_m": [
+      1,
+      8
+    ]
+  },
+  "historical_core_domain": {
+    "pump_power_W": [
+      3,
+      7
+    ],
+    "filter_offset_nm": [
+      4,
+      12
+    ],
+    "filter2_bw_nm": [
+      1,
+      6
+    ],
+    "gain_length_m": [
+      2.5,
+      5.6
+    ]
+  },
+  "gain_length_step_m": 0.1,
+  "center_mapping": {
+    "sf1_center_nm": 1040,
+    "sf2_center_nm": "1040-filter_offset_nm"
+  },
+  "reference_design": {
+    "pump_power_W": 4,
+    "filter_offset_nm": 10,
+    "filter2_bw_nm": 3,
+    "gain_length_m": 4
+  },
+  "scale_anchor": {
+    "run_id": "config_waveform_001",
+    "source_report": "PHASE2_CONFIG_AND_WAVEFORM_REPORT.md",
+    "source_kind": "repaired_original_backend",
+    "compressed_energy_nJ": 128.66941786965054,
+    "compressed_duration_fs": 29.84941905629446,
+    "compressed_peak_power_MW": 2.850940617966913,
+    "usage": "Scale only; excluded from all training/validation/test and candidate designs. This is not independent validation."
+  },
+  "curves": {
+    "pump_power_W": {
+      "x": [
+        3.0,
+        3.25,
+        3.5,
+        3.75,
+        4.0,
+        4.25,
+        4.5,
+        4.75,
+        5.0,
+        5.25,
+        5.5,
+        5.75,
+        6.0,
+        6.25,
+        6.5,
+        6.75,
+        7.0
+      ],
+      "energy": [
+        62.1,
+        70,
+        79.8,
+        86,
+        92.3,
+        110,
+        127.7,
+        134,
+        149.2,
+        160,
+        171.5,
+        177,
+        183,
+        196,
+        197.6,
+        198,
+        198.1
+      ],
+      "duration": [
+        61.4,
+        59,
+        58.7,
+        50,
+        45,
+        43,
+        42.5,
+        42,
+        41.3,
+        41,
+        40.6,
+        40.3,
+        40,
+        38.8,
+        38.7,
+        38.5,
+        38.1
+      ],
+      "file": "plot_pump_dependence.m",
+      "blob": "d04171eba5ba21d0ac5fed75e8f729871f9e95bf",
+      "extension_scale": 1.0
+    },
+    "filter_offset_nm": {
+      "x": [
+        4.0,
+        4.5,
+        5.0,
+        5.5,
+        6.0,
+        6.5,
+        7.0,
+        7.5,
+        8.0,
+        8.5,
+        9.0,
+        9.5,
+        10.0,
+        10.5,
+        11.0,
+        11.5,
+        12.0
+      ],
+      "energy": [
+        110,
+        109,
+        108,
+        107.3,
+        106,
+        103.1,
+        102,
+        101.5,
+        98,
+        97.4,
+        95,
+        94.6,
+        92.3,
+        92.7,
+        100,
+        104.7,
+        110
+      ],
+      "duration": [
+        60,
+        58.4,
+        58,
+        57,
+        55,
+        52.3,
+        52,
+        50,
+        49,
+        47.6,
+        47,
+        46.6,
+        45,
+        44.8,
+        43,
+        42,
+        41
+      ],
+      "file": "plot_offset_dependence.m",
+      "blob": "ba8d6e26b1ee0643340dc0c5f9c3b63103b0c039",
+      "extension_scale": 2.0
+    },
+    "filter2_bw_nm": {
+      "x": [
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        4.5,
+        5.0,
+        5.5,
+        6.0
+      ],
+      "energy": [
+        80,
+        85.4,
+        88,
+        90.2,
+        92.3,
+        91.1,
+        90,
+        88,
+        87,
+        84,
+        83
+      ],
+      "duration": [
+        52,
+        50,
+        48,
+        45.4,
+        45,
+        45.7,
+        46,
+        46.5,
+        47,
+        48.3,
+        49
+      ],
+      "file": "plot_bandwidth_dependence.m",
+      "blob": "d853dba285635869b315ddee134c9bafe97a04a2",
+      "extension_scale": 1.0
+    },
+    "gain_length_m": {
+      "x": [
+        2.5,
+        2.8,
+        3.2,
+        3.6,
+        4,
+        4.4,
+        4.8,
+        5.2,
+        5.6
+      ],
+      "energy": [
+        70,
+        76.5,
+        82,
+        89,
+        92.3,
+        97,
+        103,
+        108,
+        113
+      ],
+      "duration": [
+        55,
+        52.5,
+        50,
+        48.2,
+        45,
+        43,
+        42,
+        41.4,
+        40
+      ],
+      "file": "plot_gain_length_dependence.m",
+      "blob": "02c7aa081126a6b473650d5a972564ea7deb4d4c",
+      "extension_scale": 1.0
+    }
+  },
+  "assumed_coefficients": {
+    "normalized_input_scales": [
+      4,
+      6,
+      3,
+      4
+    ],
+    "energy_cross_PL": 0.08,
+    "energy_cross_DB": -0.06,
+    "energy_cross_PD": -0.04,
+    "duration_cross_PL": 0.04,
+    "duration_cross_DB": 0.04,
+    "energy_outside_lower": [
+      0.5,
+      0.1,
+      0.3,
+      0.6
+    ],
+    "energy_outside_upper": [
+      0.18,
+      0.8,
+      0.25,
+      0.15
+    ],
+    "duration_outside_lower": [
+      0.15,
+      0.1,
+      0.35,
+      0.15
+    ],
+    "duration_outside_upper": [
+      0.3,
+      0.25,
+      0.15,
+      0.18
+    ],
+    "shape_cross_PL_squared": 0.06,
+    "shape_cross_DB_squared": 0.04
+  },
+  "extension_rule": "Inside each historical interval use linear interpolation in log(value). Outside use endpoint_log + endpoint_log_slope*h*tanh((x-endpoint)/h). Add the explicit quadratic outside-domain penalties and cross terms specified here.",
+  "calibration_limit": "Do not interpret historical raw/processed energy as compressed energy. Only dimensionless ratios are transferred. Historical approximate E/FWHM peak columns are NOT used as measured peak labels.",
+  "generated_at": "2026-09-27",
+  "repository": "Yukino8735/Mamyshev-Oscillator-Simulation",
+  "remote_source_scope": "Read-only default-branch historical files; not a snapshot of the user uncommitted Mac worktree."
+}

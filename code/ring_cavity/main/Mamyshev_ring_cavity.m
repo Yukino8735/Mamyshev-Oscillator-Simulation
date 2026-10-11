@@ -193,10 +193,17 @@ while rt_num < max_rt
     if rt_num ~= 1
         close(fig); % close the previous figure and plot a new one
     end
+    % Fail before pulse_tracker/findpeaks can obscure a numerical error.
+    if ~isfinite(output_energy(rt_num))
+        error('check_convergence:NonFiniteEnergy','Nonfinite output energy at round %d.',rt_num);
+    end
+    if any(~isfinite(output_field(:,:,rt_num)),'all')
+        error('check_convergence:NonFiniteField','Nonfinite output field at round %d.',rt_num);
+    end
     warning('off')
     output_field(:,:,rt_num) = pulse_tracker(output_field(:,:,rt_num));
     warning('on');
-    [converged_yes,force_stop_yes,fig] = check_convergence( output_energy,output_field(:,:,rt_num),f,t,tol_convergence,true,force_stop );
+    [converged_yes,force_stop_yes,fig] = check_convergence( output_energy,output_field(:,:,rt_num),f,t,tol_convergence,true,force_stop,1,rt_num );
     
     % ---------------------------------------------------------------------
     % Display running time of each roundtrip

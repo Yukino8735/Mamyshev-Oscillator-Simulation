@@ -1,0 +1,130 @@
+{
+  "protocol_id": "accuracy_first_v4_2",
+  "thresholds_status": "user-task proposals fixed before pilot; not optical industry standards",
+  "features": [
+    "pump_power_W",
+    "filter_offset_nm",
+    "filter2_bw_nm",
+    "gain_length_m"
+  ],
+  "targets": [
+    "compressed_energy_nJ",
+    "compressed_duration_fs",
+    "compressed_peak_power_MW"
+  ],
+  "training_sizes": [
+    256,
+    512,
+    1024,
+    2048,
+    4096
+  ],
+  "training_seeds": [
+    11,
+    22,
+    33
+  ],
+  "tolerances": {
+    "compressed_energy_nJ": {
+      "absolute": 2.0,
+      "relative": 0.03
+    },
+    "compressed_duration_fs": {
+      "absolute": 1.0,
+      "relative": 0.03
+    },
+    "compressed_peak_power_MW": {
+      "absolute": 0.05,
+      "relative": 0.05
+    }
+  },
+  "tolerance_rule": "abs(prediction-truth) <= max(absolute, relative*abs(truth))",
+  "acceptance": {
+    "each_target_pass_rate": 0.95,
+    "joint_all3_pass_rate": 0.9,
+    "each_core_expanded_target_pass_rate": 0.9,
+    "confirm_selected_size_all_three_train_orders": true,
+    "wilson95_lower_bounds_are_reported_not_silently_assumed": true
+  },
+  "selection": "At each size fit fixed families with train order11. Confirm gate-passing family at same size on train orders22/33. Smallest size passing every gate for all3 orders; tie by mean validation tolerance-normalized RMSE. Production fit uses order11. Do not refit after calibration. If none passes through4096, keep best validation model and accuracy_target_met=false.",
+  "metrics": [
+    "MAE_original_units",
+    "RMSE_original_units",
+    "R2",
+    "median_relative_error",
+    "P90_relative_error",
+    "P95_relative_error",
+    "max_absolute_error",
+    "pass_rate_tolerance",
+    "joint_pass_rate",
+    "Wilson95_pass_rate_interval",
+    "median_and_P95_tolerance_ratio"
+  ],
+  "relative_error_floor": {
+    "compressed_energy_nJ": 1e-12,
+    "compressed_duration_fs": 1e-12,
+    "compressed_peak_power_MW": 1e-12
+  },
+  "groups": [
+    "all",
+    "historical_core",
+    "expanded_proposal",
+    "each_parameter_equal_width_4bins",
+    "duration_truth_38_to_42_fs",
+    "energy_truth_95_to_105_nJ"
+  ],
+  "small_group_minimum": 50,
+  "uncertainty": {
+    "method": "split_conformal_joint_max_absolute_log_residual",
+    "alpha": 0.05,
+    "score": "max_j abs(log(y_j)-log(yhat_j))",
+    "quantile_rank": "ceil((n_cal+1)*(1-alpha))",
+    "interval": "[prediction*exp(-q), prediction*exp(q)] for all3",
+    "claims": "marginal joint coverage only for exchangeable calibration/test from same reference distribution; not conditional, per-design, boundary or adaptive-search guarantees"
+  },
+  "models": {
+    "ridge2": {
+      "degree": 2,
+      "alpha": 1.0,
+      "log_targets": true
+    },
+    "hist_gb": {
+      "max_iter": 300,
+      "max_leaf_nodes": 31,
+      "learning_rate": 0.08,
+      "min_samples_leaf": 10,
+      "l2_regularization": 0.1,
+      "early_stopping": false,
+      "log_targets": true
+    },
+    "spline_interactions": {
+      "n_knots": 16,
+      "degree": 3,
+      "knots": "uniform",
+      "interaction_polynomial_degree": 4,
+      "alpha": 0.1,
+      "log_targets": true,
+      "knots_source": "training input extrema only; no historic curve knots or generator values"
+    }
+  },
+  "candidate_policy": "20k supplied X only; no oracle labels computed until queried; split guards exclude all supervised/parity/legacy-test IDs",
+  "pilot_policy": "Only train/validation. No calibrated intervals or final test/challenge model scores in data-creation pilot.",
+  "real_solver_evaluation": "not_measured; synthetic accuracy is not GMMNLSE accuracy; solver_emulation needs distinct labeled source and frozen protocol",
+  "protocol_history": "Error tolerances fixed before initial pilot. Spline-interaction family added after development-only comparison; this is model development, not a blind preregistered model comparison. No final test/calibration/challenge model scores used.",
+  "exploratory_models": {
+    "rbf_svr": {
+      "C": 100.0,
+      "epsilon": 0.002,
+      "gamma": 4.0,
+      "tol": 0.001,
+      "cache_size_MB": 256,
+      "log_targets": true,
+      "input_scaling": "fixed_domain_to_unit_box"
+    }
+  },
+  "model_order": [
+    "ridge2",
+    "spline_interactions",
+    "hist_gb"
+  ]
+}

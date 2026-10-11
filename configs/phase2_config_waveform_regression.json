@@ -1,0 +1,23 @@
+{
+  "scope": "Default design software regression and offline saved-field checks; not numerical convergence or physical-state validation",
+  "reference_run_id": "validation_002",
+  "reference": "reports/local/phase2/single_validation_002/validation_002/final_result.json",
+  "fixed_before_real_run": true,
+  "scalar_comparison": "abs(actual-reference) <= absolute_tolerance + relative_tolerance*abs(reference)",
+  "relative_tolerance": 1e-10,
+  "absolute_tolerances": {
+    "energy_nJ": 1e-10,
+    "peak_power_W": 1e-7,
+    "global_half_height_span_ps": 1e-12,
+    "compressor_and_transform_limited_width_fs": 1e-9,
+    "legacy_energy_rel_fluct": 1e-12
+  },
+  "round_count_and_stop_flags": "exact equality",
+  "complex_round_to_final_field": "exact equality",
+  "round_alignment": "No additional alignment; pre and production pulse_tracker-centered post fields analyzed separately",
+  "per_round_normalization": false,
+  "smoothing_or_resampling": false,
+  "physical_state": "undetermined",
+  "numerical_validation": "not_verified",
+  "eligible_as_validated_training_truth": false
+}

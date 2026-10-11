@@ -1,0 +1,61 @@
+{
+  "schema_version": "mamyshev_public_demo_profile_v1",
+  "profile_version": "single_10k_from_main_001",
+  "python_requested": "3.11",
+  "model_id": "demo_10k_v1",
+  "model_sha256": "9885e8f258fa10de0a69844b70fa72242fcc64267d9db1e6c07dd4bd4609b6d0",
+  "model_manifest_sha256": "9908e22c30358d51f0f8993a39da5c2e8fbc76710fbf08213ab7199e1ae9ce7c",
+  "class_sha256": "46f9779b878d195b601930446cce3ec5335f694ef219f28c2ae728a353590b11",
+  "copy": [
+    "checks/presentation_smoke.py",
+    "demo/app.py",
+    "demo/assets/matlab_plan_summary.json",
+    "demo/assets/models/catalog.json",
+    "demo/assets/models/demo_10k_v1/calibration.json",
+    "demo/assets/models/demo_10k_v1/dependencies.json",
+    "demo/assets/models/demo_10k_v1/domain.json",
+    "demo/assets/models/demo_10k_v1/manifest.json",
+    "demo/assets/models/demo_10k_v1/metrics.json",
+    "demo/assets/models/demo_10k_v1/model.joblib",
+    "demo/assets/models/demo_10k_v1/model_card.json",
+    "demo/assets/models/demo_10k_v1/models_v4.py",
+    "demo/assets/scenarios.json",
+    "demo/predict.py",
+    "demo/ui_charts.py",
+    "demo/ui_logic.py",
+    "demo/ui_presentation.py",
+    "mamyshev_accuracy_v4/configs/domain.json",
+    "src/mamyshev_ml/demo_inference.py"
+  ],
+  "templates": {
+    ".gitignore": "demo/deploy/templates/gitignore.txt",
+    "DEPLOYMENT.md": "demo/deploy/templates/DEPLOYMENT.md",
+    "README.md": "demo/deploy/templates/README.md",
+    "THIRD_PARTY_NOTICES.md": "demo/deploy/templates/THIRD_PARTY_NOTICES.md",
+    "src/mamyshev_ml/__init__.py": "demo/deploy/templates/package_init.py"
+  },
+  "pure_modules": {
+    "src/mamyshev_ml/v4_evaluators.py": {
+      "functions": ["canonical", "digest", "validate_design", "design_id"],
+      "constants": ["ROOT", "PACKAGE", "FEATURES", "TARGETS", "UNITS"],
+      "imports": ["hashlib", "json", "math", "pathlib"]
+    },
+    "src/mamyshev_ml/v4_scan.py": {
+      "functions": ["make_plan", "verify_plan"],
+      "constants": ["DEFAULT"],
+      "imports": ["csv", "itertools", "json", "pathlib", ".v4_evaluators", "numpy", "scipy.stats"]
+    }
+  },
+  "requirements": [
+    "streamlit==1.64.0",
+    "altair==6.3.0",
+    "pyarrow==25.0.1",
+    "pandas==3.0.6",
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    "scikit-learn==1.9.1",
+    "joblib==1.6.0",
+    "threadpoolctl==3.7.0"
+  ],
+  "streamlit_config": "[browser]\ngatherUsageStats = false\n\n[client]\ntoolbarMode = \"viewer\"\n"
+}

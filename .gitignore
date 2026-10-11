@@ -15,3 +15,32 @@ results/linear_cavity/evolution/
 results/linear_cavity/evolution_generated/
 results/linear_cavity/trend_guided_generated/
 results/linear_cavity/processed_raw/
+
+# Python bootstrap and private machine diagnostics
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+/reports/local/
+
+# Demo/10k release: private datasets and execution outputs, in every format.
+# Tracked files are unaffected; see docs/GIT_RELEASE_PLAN.md before untracking.
+/mamyshev_accuracy_v4/data/
+/mamyshev_accuracy_v4/evaluation_only/
+/mamyshev_accuracy_v4/evidence/
+/mamyshev_accuracy_v4/plans/
+/mamyshev_accuracy_v4/provenance/*.csv
+/mamyshev_accuracy_v4/provenance/v3_design_ids.json
+/configs/accuracy_v4_2_protocol.json
+/data/*
+!/data/README.md
+/archive/original_experiment_folder/
+/results/
+/demo/outputs/
+/demo/.streamlit/secrets.toml
+/.streamlit/secrets.toml
+.pytest_cache/
+
+# Do not globally ignore *.mat/*.txt: engine material/section inputs are required.
+# Reviewed inference weights, tiny configs and aggregate docs/assets stay visible.

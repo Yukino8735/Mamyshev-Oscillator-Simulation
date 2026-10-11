@@ -1,0 +1,6 @@
+{
+  "pump_power_W": 4.0,
+  "filter_offset_nm": 10.0,
+  "filter2_bw_nm": 3.0,
+  "gain_length_m": 4.0
+}

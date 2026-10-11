@@ -1,0 +1,17 @@
+{
+  "schema_version": "demo10k_pending_plan_config_v1",
+  "count": 10000,
+  "input_source": "new demo_10k_v1 train X only; source labels excluded from solver plan",
+  "feature_order": ["pump_power_W", "filter_offset_nm", "filter2_bw_nm", "gain_length_m"],
+  "input_units": ["W", "nm", "nm", "m"],
+  "backend": "gmmnlse",
+  "default_action": "plan_only",
+  "max_new_real_attempts": 0,
+  "real_targets": null,
+  "execution_order": "serial",
+  "chunk_size": 256,
+  "full_scan_status": "not_run",
+  "authorization_required": ["exact plan_hash", "allowed_design_ids", "max_new_attempts", "per_run_timeout_s", "total_wall_limit_s"],
+  "physical_rules": {"passive_lengths_m": [0.4, 1.5, 3.2], "pigtail_length_m": 0.2, "Nt": 32768, "time_window_ps": 50, "max_rt": 50},
+  "scope": "Proposed exploratory input domain is not a validated physical operating domain"
+}

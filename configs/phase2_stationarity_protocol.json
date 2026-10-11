@@ -1,0 +1,24 @@
+{
+  "scope": "Same design cold-start observation, not numerical convergence or physical labels",
+  "observation_options": {
+    "observation_mode": "fixed_roundtrips",
+    "observation_roundtrips": 20
+  },
+  "max_rt_unchanged": 50,
+  "safety_priority": ["nonfinite/numerical errors", "death threshold", "force_stop.fluctuation", "observation round budget"],
+  "bypass_only": ["converged", "force_stop.convergence"],
+  "reference_run_id": "config_waveform_001",
+  "prefix_rounds": 6,
+  "prefix_complex_comparison": "max(abs(new-reference)) <= 1e-10 + 1e-10*max(abs(reference)); sqrt(W)",
+  "prefix_energy_comparison": "abs(new-reference) <= 1e-10 + 1e-10*abs(reference); nJ",
+  "prefix_grid_comparison": "exact equality; no time/phase/amplitude alignment",
+  "alignment": "global integer circular time shift; positive shift = circshift(current,+lag); original sample spacing precision",
+  "alignment_tie_absolute": "1e-12*norm(I)*norm(J); smallest absolute signed lag, then signed lag",
+  "alignment_ambiguity_absolute": "1e-8*norm(I)*norm(J) between distinct local correlation maxima",
+  "normalization_or_smoothing": false,
+  "fixed_reference_round": 6,
+  "tail_summary": "last five available rounds, never selected for calmness",
+  "physical_state": "undetermined",
+  "numerical_validation": "not_verified",
+  "eligible_as_validated_training_truth": false
+}

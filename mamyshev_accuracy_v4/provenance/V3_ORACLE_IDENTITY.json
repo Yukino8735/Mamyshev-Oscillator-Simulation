@@ -1,0 +1,10 @@
+{
+  "formula_id": "mamyshev_repository_guided_synthetic_v3",
+  "release_id": "mamyshev_accuracy_v4",
+  "files": {
+    "reference/oracle.py": "98df4bade605db85f2d384f8bfebe69ceb4716120f729d3d460819ead25ade8e",
+    "configs/generator_recipe.json": "4cc26ad801213d01554d96846a7d10f5d6d3260c07e099e8df9441c357d4c770",
+    "matlab/v3_evaluate_synthetic.m": "123a562fb4edc5a0ba20ea61f03d4f4d3d269092b0d76cb4519348491586a41d"
+  },
+  "scope": "Same V3 formula; new sampling and evaluation release, not a new physics model."
+}

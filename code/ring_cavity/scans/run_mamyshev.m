@@ -1,4 +1,4 @@
-function result = run_mamyshev(PumpPower, cw2, plot_on)
+function result = run_mamyshev(PumpPower, cw2, plot_on, diagnostic_options, design_config)
 % run_mamyshev  模拟 Mamyshev 振荡器在给定 Pump 和 cw2 下的稳态
 %
 % result 结构中包含：
@@ -26,6 +26,41 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     end
     if nargin < 3
         plot_on = false;     % 扫描时建议 false，单点调试可以 true
+    end
+    if nargin < 4, diagnostic_options = []; end
+    if nargin < 5
+        assert(isnumeric(cw2) && ~islogical(cw2) && isscalar(cw2) && isreal(cw2) && isfinite(cw2), ...
+            'MamyshevConfig:Wavelength','Legacy cw2 must be a finite real wavelength in nm.');
+        design_config=struct('pump_power_W',PumpPower,'filter_offset_nm',1040-cw2, ...
+            'filter2_bw_nm',3,'gain_length_m',4);
+    else
+        assert(isempty(PumpPower) && isempty(cw2),'MamyshevConfig:ConflictingInputs', ...
+            'Use configuration or legacy PumpPower/cw2, never both.');
+    end
+    design_config=mamyshev_resolve_config(design_config);
+    PumpPower=design_config.pump_power_W;
+    cw2=1040-design_config.filter_offset_nm;
+    assert(isscalar(plot_on) && (islogical(plot_on) || ...
+        (isnumeric(plot_on) && isreal(plot_on) && isfinite(plot_on) && any(plot_on==[0 1]))), ...
+        'MamyshevConfig:Plot','plot_on must be a scalar boolean.');
+    capture = [];
+    observation_options=mamyshev_observation_options();
+    if ~isempty(diagnostic_options)
+        assert(isstruct(diagnostic_options) && isscalar(diagnostic_options) && ...
+            all(ismember(fieldnames(diagnostic_options),{'capture','preflight_only','observation_options'})), ...
+            'Mamyshev:InvalidDiagnostics','Use the separate read-only capture channel.');
+        if isfield(diagnostic_options,'capture')
+            assert(isa(diagnostic_options.capture,'MamyshevCapture'),'Mamyshev:InvalidDiagnostics','Invalid capture.');
+            capture = diagnostic_options.capture;
+        end
+        if isfield(diagnostic_options,'observation_options')
+            observation_options=mamyshev_observation_options(diagnostic_options.observation_options);
+        end
+        if isfield(diagnostic_options,'preflight_only')
+            assert(islogical(diagnostic_options.preflight_only) && isscalar(diagnostic_options.preflight_only) && ...
+                (~diagnostic_options.preflight_only || ~isempty(capture)), ...
+                'Mamyshev:InvalidDiagnostics','Initialization-only mode requires an actual capture.');
+        end
     end
 
     close all;
@@ -75,7 +110,7 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     sim_Gain.gain_model = 4;
     sim_Gain.progress_bar_name = 'Gain (10um)';
     sim_Gain.save_period = 0.1;
-    fiber_Gain.L0 = 4;
+    fiber_Gain.L0 = design_config.gain_length_m;
     fiber_Gain.MFD = 11.1; % um
     [fiber_Gain,sim_Gain] = load_default_GMMNLSE_propagate(fiber_Gain,sim_Gain,'single_mode');
 
@@ -97,6 +132,8 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
 
     %% Setup general cavity parameters
     max_rt = 50;          % 建议扫描时稍大一点
+    observation_options=mamyshev_observation_options(observation_options,max_rt);
+    fixed_observation=strcmp(observation_options.observation_mode,'fixed_roundtrips');
     Nt = 2^15;
     time_window = 50; % ps
     dt = time_window/Nt;
@@ -112,7 +149,14 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
 
     %% Spectral filter parameters
     spectral_filter1 = struct('bw',5,'cw',1040); % 你这里用 1040
-    spectral_filter2 = struct('bw',3,'cw',cw2);
+    spectral_filter2 = struct('bw',design_config.filter2_bw_nm,'cw',cw2);
+
+    % Same legacy constants, named once so diagnostics read actual arguments.
+    output_fiber_length = 0.2; % m
+    compressor_type = 'Treacy-t';
+    grating_incident_angle = pi/6; % rad
+    grating_spacing = 1e-6; % m
+    pulse_death_energy = 0.01; % nJ
 
     %% Setup initial conditions
     tfwhm = 1; % ps
@@ -134,10 +178,37 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     v = 1/fiber_cavity(1).betas(2)*1e12;
     gain_rate_eqn.t_rep = L0/v;
     disp(1/gain_rate_eqn.t_rep);
-    [gain_rate_eqn,cross_sections_pump,cross_sections,overlap_factor,~] = ...
+    [gain_rate_eqn,cross_sections_pump,cross_sections,overlap_factor,N_total_computed] = ...
         gain_info( sim_Gain,gain_rate_eqn,ifftshift(lambda,1) );
     N_total = 9e7;
     gain_param = {gain_rate_eqn,cross_sections_pump,cross_sections,overlap_factor,N_total};
+
+    if ~isempty(capture)
+        % Capture genuine production locals before any propagation or observer attachment.
+        configuration = struct('PumpPower_W',PumpPower,'cw2_nm',cw2, ...
+            'max_rt',max_rt,'Nt',Nt,'time_window_ps',time_window,'dt_ps',dt, ...
+            'fiber_cavity',fiber_cavity,'sim_cavity',sim_cavity, ...
+            'spectral_filter1',spectral_filter1,'spectral_filter2',spectral_filter2, ...
+            'tol_convergence',tol_convergence,'force_stop',force_stop, ...
+            'initial_tfwhm_ps',tfwhm,'initial_energy_nJ',total_energy, ...
+            'initial_builder','build_MMgaussian, default Gaussian, one scalar mode', ...
+            'gain_rate_eqn',gain_rate_eqn,'N_total_ions_per_um3',N_total, ...
+            'output_fiber_length_m',output_fiber_length,'compressor_type',compressor_type, ...
+            'grating_incident_angle_rad',grating_incident_angle,'grating_spacing_m',grating_spacing, ...
+            'plot_on',plot_on,'rng',rng);
+        capture.configuration(configuration,gain_param,prop_output,t,f,lambda, ...
+            N_total_computed,pulse_death_energy,design_config,observation_options);
+        if isfield(diagnostic_options,'preflight_only') && diagnostic_options.preflight_only
+            result = struct('kind','initialization_preflight','propagation_started',false, ...
+                'full_cavity_attempts',0,'physical_state','undetermined', ...
+                'eligible_as_validated_training_truth',false,'observability',capture.summary());
+            return;
+        end
+        for diagnostic_j = 1:numel(sim_cavity)
+            sim_cavity(diagnostic_j).readonly_observer = capture.observer;
+        end
+        sim8.readonly_observer = capture.observer;
+    end
 
     %% Run the cavity simulation
     func = analyze_sim;
@@ -145,6 +216,10 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     output_energy = zeros(max_rt,1);
     rt_num = 0;
     pulse_survives = true;
+    observation_history=struct('roundtrip',{},'converged',{},'force_stop_convergence',{}, ...
+        'force_stop_fluctuation',{},'criterion_reason',{},'stop_reason',{});
+    first_legacy_convergence=NaN;
+    observation_stop_reason='';
 
     if ~plot_on
         % 关闭所有 figure 显示（扫描时建议）
@@ -165,7 +240,12 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
 
         for j = 1:4
             warning('off');
+            if ~isempty(capture)
+                capture.propagation_call(rt_num,sprintf('cavity_%d',j), ...
+                    fiber_cavity(j),prop_output,sim_cavity(j),gain_param);
+            end
             prop_output = GMMNLSE_propagate(fiber_cavity(j), prop_output, sim_cavity(j),gain_param);
+            if ~isempty(capture), capture.observer.complete_segment(); end
             warning('on');
 
             time_delay = time_delay + prop_output.t_delay(end);
@@ -180,6 +260,9 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
 
             % Spectral filters
             if (j==2)
+                if ~isempty(capture)
+                    capture.filter_call(rt_num,'sf1',spectral_filter1.cw,spectral_filter1.bw,4,plot_on);
+                end
                 if plot_on && rt_num ~= 1
                     close(fig_filter1);
                 end
@@ -194,6 +277,9 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
             end
 
             if (j==3)
+                if ~isempty(capture)
+                    capture.filter_call(rt_num,'sf2',spectral_filter2.cw,spectral_filter2.bw,4,plot_on);
+                end
                 if plot_on && rt_num ~= 1
                     close(fig_filter2);
                 end
@@ -213,20 +299,30 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
 
         % Energy of the output field
         output_energy(rt_num) = trapz(abs(output_field(:,:,rt_num)).^2)*prop_output.dt/1e3; % nJ
+        if ~isempty(capture) && ~isempty(capture.waveforms)
+            before_tracker_field=output_field(:,:,rt_num);
+        end
 
         % Convergence check
         if rt_num ~= 1 && plot_on
             close(fig); % 只有画图时关
         end
+        % Fail before pulse_tracker/findpeaks can obscure a numerical error.
+        if ~isfinite(output_energy(rt_num))
+            error('check_convergence:NonFiniteEnergy','Nonfinite output energy at round %d.',rt_num);
+        end
+        if any(~isfinite(output_field(:,:,rt_num)),'all')
+            error('check_convergence:NonFiniteField','Nonfinite output field at round %d.',rt_num);
+        end
         warning('off');
         output_field(:,:,rt_num) = pulse_tracker(output_field(:,:,rt_num));
         warning('on');
         if plot_on
-            [converged_yes,force_stop_yes,fig] = check_convergence( ...
-                output_energy,output_field(:,:,rt_num),f,t,tol_convergence,plot_on,force_stop);
+            [converged_yes,force_stop_yes,fig,convergence_diagnostic] = check_convergence( ...
+                output_energy,output_field(:,:,rt_num),f,t,tol_convergence,plot_on,force_stop,1,rt_num);
         else
-            [converged_yes,force_stop_yes] = check_convergence( ...
-                output_energy,output_field(:,:,rt_num),f,t,tol_convergence,plot_on,force_stop);
+            [converged_yes,force_stop_yes,~,convergence_diagnostic] = check_convergence( ...
+                output_energy,output_field(:,:,rt_num),f,t,tol_convergence,plot_on,force_stop,1,rt_num);
         end
 
         % 显示时间
@@ -250,18 +346,32 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
             fig_evolution = func.analyze_fields_within_cavity(t,f,field{rt_num},saved_z,splice_z);
         end
 
-        % Break if converged
-        if (exist('converged_yes','var') && converged_yes) || ...
-           (exist('force_stop_yes','var') && isstruct(force_stop_yes) && ...
-            isfield(force_stop_yes,'convergence') && force_stop_yes.convergence)
-            cprintf('blue','The field has converged!\n');
-            break;
+        if ~isempty(capture) && ~isempty(capture.waveforms)
+            capture.waveforms.round(rt_num,before_tracker_field,output_field(:,:,rt_num),output_energy(rt_num));
         end
 
-        % Break if pulse dies
-        if output_energy(rt_num) < 0.01
-            disp('The pulse dies.');
-            pulse_survives = false;
+        [stop_now,stop_reason]=mamyshev_observation_decision(observation_options, ...
+            rt_num,converged_yes,force_stop_yes,output_energy(rt_num),pulse_death_energy,max_rt);
+        if fixed_observation
+            if isnan(first_legacy_convergence) && (converged_yes || force_stop_yes.convergence)
+                first_legacy_convergence=rt_num;
+            end
+            entry=struct('roundtrip',rt_num,'converged',converged_yes, ...
+                'force_stop_convergence',force_stop_yes.convergence, ...
+                'force_stop_fluctuation',force_stop_yes.fluctuation, ...
+                'criterion_reason',convergence_diagnostic.reason,'stop_reason',stop_reason);
+            observation_history(end+1)=entry;
+            if ~isempty(capture), capture.observation_round(entry); end
+        end
+        if stop_now
+            observation_stop_reason=stop_reason;
+            if strcmp(stop_reason,'legacy_energy_below_threshold')
+                disp('The pulse dies.'); pulse_survives=false;
+            elseif fixed_observation
+                fprintf('Observation stopped: %s at round %d.\n',stop_reason,rt_num);
+            else
+                cprintf('blue','The field has converged!\n');
+            end
             break;
         end
     end
@@ -279,17 +389,25 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
 
     %% Add output fiber
     fiber_8c = fiber8;
-    fiber_8c.L0 = 0.2;
+    fiber_8c.L0 = output_fiber_length;
 
     prop_output1 = prop_output;
     prop_output1.fields = output_field(:,:,rt_num);
 
+    if ~isempty(capture)
+        capture.propagation_call(rt_num,'pigtail',fiber_8c,prop_output1,sim8,{});
+    end
     prop_output1 = GMMNLSE_propagate(fiber_8c, prop_output1, sim8);
+    if ~isempty(capture), capture.observer.complete_segment(); end
     pigtail_output_field = prop_output1.fields(:,:,end);
 
-    [~,~,dechirped_fwhm_fs,transform_limited_fwhm_fs,dechirped_peak_power_W] = ...
+    if ~isempty(capture)
+        capture.compressor_call(t,f,pigtail_output_field,compressor_type, ...
+            grating_incident_angle,grating_spacing,plot_on);
+    end
+    [~,~,dechirped_fwhm_fs,transform_limited_fwhm_fs,dechirped_peak_power_W,~,compressed_output_field] = ...
         analyze_field(t, f, pigtail_output_field, ...
-        'Treacy-t', pi/6, 1e-6, plot_on);
+        compressor_type, grating_incident_angle, grating_spacing, plot_on);
 
 
     %% Pack results
@@ -302,6 +420,11 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     result.output_energy = output_energy(rt_num);
     result.pulse_survives = pulse_survives;
     result.rt_num = rt_num;
+    if fixed_observation
+        result.observation=struct('options',observation_options,'history',observation_history, ...
+            'first_legacy_convergence_roundtrip',first_legacy_convergence, ...
+            'stop_reason',observation_stop_reason);
+    end
 
     if exist('converged_yes','var') && ~isempty(converged_yes)
         result.converged = converged_yes;
@@ -326,7 +449,7 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     result.dechirped_peak_power_W = dechirped_peak_power_W;
 
     % 物理锁模状态：0 无锁模；1 单脉冲/轻微呼吸；-1 不稳定/多脉冲
-    if ~pulse_survives || result.output_energy < 0.01
+    if ~pulse_survives || result.output_energy < pulse_death_energy
         result.ML_state = 0;
     elseif rel_fluct < 0.02   % <2% 波动视为锁模成功（包括 breathing）
         result.ML_state = 1;
@@ -337,6 +460,12 @@ function result = run_mamyshev(PumpPower, cw2, plot_on)
     if exist('visibility_cleanup', 'var')
         clear visibility_cleanup;
     end
+    if ~isempty(capture) && ~isempty(capture.waveforms)
+        result.compressed_field=compressed_output_field;
+        capture.waveforms.finish(result,compressed_output_field);
+        result.waveform_artifacts=capture.waveforms.summary();
+    end
+    if ~isempty(capture), capture.finish(rt_num); end
 end
 
 

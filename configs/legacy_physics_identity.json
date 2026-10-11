@@ -1,0 +1,175 @@
+{
+  "physics_identity_id": "legacy_ring_phase1_v1",
+  "identity_schema_version": "1",
+  "scope": "Frozen legacy ring physical rules and the Phase 1 reference instance; not a runnable configuration API or an experimentally validated device specification.",
+  "h02_status": "派生不一致已确认；旧实际参数已冻结；新的物理参数约定尚未完成确认/运行验证。",
+  "identity_boundaries": {
+    "numerical_repair_version": "Recorded separately by the result contract; not part of physics_identity_id.",
+    "result_protocol_version": "Recorded separately by the result contract; not part of physics_identity_id.",
+    "variable_inputs": [
+      "pump_power_W",
+      "filter2_center_wavelength_nm"
+    ],
+    "note": "Record actual variable inputs separately. Equal physical identity does not require bitwise equal outputs after a numerical repair."
+  },
+  "evidence": {
+    "base_commit": "489bf4242f9b5266d47f8892840a24af66931ff0",
+    "source_workspace": "Phase 1 and repair_001 entry local workspace; source hashes below identify pre-repair files.",
+    "source_line_references": "Line numbers in this identity refer to the pre-repair sources identified here, not subsequently inserted repair lines.",
+    "entrypoint": "code/ring_cavity/scans/run_mamyshev.m",
+    "pre_repair_entrypoint_sha256": "3ef0d8e8bafbbd2bb70190ecf44a9905b2416446be29b84e273457e9de8f454f",
+    "loader": "code/simulation_engine/GMMNLSE/load_default_GMMNLSE_propagate.m",
+    "loader_sha256": "525304e928ec5fe62b451d5db3827979e7f0eb0099593cdafefa88a9593c10d1",
+    "prior_resolved_snapshot": "reports/local/phase1/baseline_001/configuration.json",
+    "prior_initialization_probe": "reports/local/phase1/diagnostic_001/preflight.json",
+    "evidence_note": "Values were read from preserved Phase 1 artifacts and checked against source; no new propagation was used to create this record."
+  },
+  "passive_fiber": {
+    "declared_MFD_um": 10.5,
+    "MFD_used_to_derive_SR_um": 5.95,
+    "SR_per_m2": 35964678899.37611,
+    "effective_area_m2": 2.7805058479678165e-11,
+    "gain_Aeff_m2": 2.7805058479678165e-11,
+    "area_definition": "pi * (MFD_um / 2)^2 * 1e-12",
+    "SR_definition": "1 / effective_area_m2",
+    "declaration_is_verified_device_parameter": false,
+    "derivation_MFD_provenance": "Executable loader default for lambda0 < 1300 nm; source comment attributes it to Thorlabs 1060XP at 1030 nm. External device provenance has not been revalidated.",
+    "applies_to": [
+      "gain_to_SF1",
+      "SF1_to_SF2",
+      "SF2_to_gain",
+      "output_pigtail"
+    ],
+    "resolution_order": [
+      "run_mamyshev.m:63-70 sets lambda0=1035 nm/f0 and calls load_default_GMMNLSE_propagate([],sim8,'single_mode').",
+      "load_default_GMMNLSE_propagate.m:402-410 resolves lambda0 from f0 first; :425-427 chooses default MFD=5.95 um.",
+      "load_default_GMMNLSE_propagate.m:432-449 derives Aeff, SR and gain_Aeff; :610-613 returns the defaults for empty input_fiber.",
+      "run_mamyshev.m:71 then assigns fiber8.MFD=10.5 without recomputing SR or gain_Aeff.",
+      "run_mamyshev.m:83-92 copies fiber8 into the three passive cavity segments; :280-287 copies it into the output pigtail."
+    ],
+    "diagnostic_counterfactual_only": {
+      "SR_if_rederived_from_10_5_um_per_m2": 11548658002.132996,
+      "actual_SR_divided_by_counterfactual_SR": 3.1141868512110724,
+      "applied_to_production": false,
+      "note": "This ratio diagnoses inconsistent derived fields. It is not a correction factor for pulse width, energy or power."
+    }
+  },
+  "gain_fiber": {
+    "MFD_um": 11.1,
+    "SR_per_m2": 10333897774.005056,
+    "effective_area_m2": 9.676890771219959e-11,
+    "gain_Aeff_m2": 9.676890771219959e-11,
+    "resolution_order": "run_mamyshev.m:78-80 passes MFD=11.1 into the loader before SR and gain_Aeff are derived."
+  },
+  "shared_fiber_properties": {
+    "material": "silica",
+    "n2_m2_per_W": 2.3e-20,
+    "betas": [
+      8826800,
+      4882.1,
+      0.0209,
+      0.0000329,
+      -2.67e-8
+    ],
+    "beta_units_by_index": [
+      "1/m",
+      "ps/m",
+      "ps^2/m",
+      "ps^3/m",
+      "ps^4/m"
+    ],
+    "source": "code/simulation_engine/GMMNLSE/load_default_GMMNLSE_propagate.m:418-427"
+  },
+  "preserved_physical_rules": {
+    "carrier_wavelength_nm": 1035,
+    "carrier_frequency_THz": 289.65454879227053,
+    "cavity_segments": [
+      {
+        "name": "gain",
+        "length_m": 4
+      },
+      {
+        "name": "gain_to_SF1",
+        "length_m": 0.4
+      },
+      {
+        "name": "SF1_to_SF2",
+        "length_m": 1.5
+      },
+      {
+        "name": "SF2_to_gain",
+        "length_m": 3.2
+      }
+    ],
+    "passive_length_rule": "Fixed legacy lengths; no implicit scaling with gain length.",
+    "gain_model": 4,
+    "N_total_ions_per_um3": 90000000,
+    "N_total_resolution": "run_mamyshev.m:137-140 discards the concentration output from gain_info and explicitly uses 9e7.",
+    "pump_wavelength_nm": 976,
+    "counterpump_power_W": 0,
+    "gain_core_diameter_um": 10,
+    "gain_cladding_diameter_um": 125,
+    "gain_core_NA": 0.08,
+    "gain_upper_state_lifetime_s": 0.00084,
+    "ignore_ASE": true,
+    "cross_section_source": {
+      "path": "code/simulation_engine/GMMNLSE/Gain_rate_eqn/Liekki Yb_AV_20160530.txt",
+      "sha256": "abe7bd0fb9aa6afb6d54cd98a85ec72c3ba689e002905c75f2f7e5e084721100",
+      "note": "No cross-section arrays are copied into this public record."
+    },
+    "Raman_model": 1,
+    "Raman_sponRS": true,
+    "num_photon_noise_per_band": 0,
+    "initial_field": {
+      "form": "build_MMgaussian",
+      "temporal_FWHM_ps": 1,
+      "energy_nJ": 1
+    },
+    "repetition_period_rule": "Initial sum(segment lengths)/(1/beta1*1e12); original update adds accumulated time_delay*1e-12 to the initial period.",
+    "SF1": {
+      "center_wavelength_nm": 1040,
+      "nominal_bandwidth_nm": 5,
+      "gaussexpo": 4
+    },
+    "SF2": {
+      "center_wavelength_input": "filter2_center_wavelength_nm",
+      "nominal_bandwidth_nm": 3,
+      "gaussexpo": 4
+    },
+    "filter_rule": {
+      "frequency_width_THz": "299792.458/(cw_nm-bw_nm/2) - 299792.458/(cw_nm+bw_nm/2)",
+      "f_0": "frequency_width_THz/(2*sqrt(log(2)))",
+      "H": "exp(-(f-center_f)^(2*gaussexpo)/(2*f_0^(2*gaussexpo)))",
+      "circulating_field_amplitude_transfer": "H",
+      "rejected_field_amplitude_transfer": "1-H",
+      "output_port": "SF1 rejected port",
+      "source": "code/simulation_engine/GMMNLSE/gaussian_spectral_filter.m:40-55",
+      "note": "Preserved as implemented; no claim that this is a lossless complementary port or that nominal bandwidth equals measured intensity FWHM for gaussexpo=4."
+    },
+    "output_pigtail_length_m": 0.2,
+    "compressor": {
+      "model": "Treacy-t",
+      "grating_incidence_angle_rad": 0.5235987755982988,
+      "grating_spacing_m": 0.000001,
+      "diffraction_order": -1,
+      "source": "run_mamyshev.m:280-292; analyze_field.m:158-159",
+      "note": "Original physical assumptions retained. Compressor optimization/metric definitions belong to the separately recorded numerical/result protocol."
+    }
+  },
+  "phase1_reference_inputs": {
+    "pump_power_W": 4,
+    "filter2_center_wavelength_nm": 1030,
+    "rng": {
+      "generator": "twister",
+      "seed": 0,
+      "source": "Phase 1 launch harness before invocation",
+      "note": "run_mamyshev does not internally fix the seed. This is the preserved Phase 1 initial random state, not a new production default."
+    }
+  },
+  "validation_limits": [
+    "The declared 10.5 um value is not established here as the actual device MFD.",
+    "No MFD-based production parameter was changed or rederived by repair_001.",
+    "No new physical configuration or independent physical/numerical validation is claimed.",
+    "Independent convergence, experimental agreement and single-pulse classification remain unverified."
+  ]
+}

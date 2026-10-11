@@ -1,0 +1,96 @@
+{
+  "schema_version": "mamyshev_model_usage_v1",
+  "usage_version": "v4_usage_after_review_001",
+  "purpose": "Describe frozen-model empirical evidence without changing predictions, weights, labels or historical artifacts.",
+  "models": {
+    "4e0097e404281b3b8eaee075fb1d7f6d7db3e4a817daa823ac04bc5cfd263935": {
+      "model_sha256": "4e0097e404281b3b8eaee075fb1d7f6d7db3e4a817daa823ac04bc5cfd263935",
+      "model_version": "v4_spline_interactions_n512_order11",
+      "training_target_source": "repository_guided_synthetic",
+      "training_target_backend": "mamyshev_repository_guided_synthetic_v3",
+      "evidence_kind": "Frozen V4 synthetic evaluation; not GMMNLSE or experiment validation",
+      "evidence": {
+        "selection": {
+          "path": "reports/local/accuracy_v4_001/models/selection.json",
+          "sha256": "2880caa04001fb834e17f2cf7391d7a61fdc08ac3a07693b51a109324332e0ca"
+        },
+        "final_metrics": {
+          "path": "reports/local/accuracy_v4_001/evaluation/final_metrics.json",
+          "sha256": "91c691197046e804f12a6818c4b9dbeb5c313fab60b4ea754ae428ae9145257c"
+        },
+        "accuracy_protocol": {
+          "path": "mamyshev_accuracy_v4/configs/accuracy_protocol.json",
+          "sha256": "89869bf5f9702a2f27f8b4d60199c1759bfcfb0a2beaa457a48566ae146562ff"
+        },
+        "report": "docs/ACCURACY_FIRST_V4_REPORT.md"
+      },
+      "validation_scope": {
+        "status": "empirical_reference_pass_with_known_scenario_failures",
+        "prediction_permitted": true,
+        "accuracy_guaranteed": false,
+        "validated_for_real_solver": false,
+        "per_input_accuracy": "not_established",
+        "reference_distribution": "V4 declared 50/50 historical-core and expanded-proposal reference mixture; not every input or every fixed slice",
+        "reference_test": {
+          "n": 1536,
+          "task_gate_status": "passed",
+          "target_pass_rates": {
+            "compressed_energy_nJ": 0.953125,
+            "compressed_duration_fs": 0.9869791666666666,
+            "compressed_peak_power_MW": 0.9993489583333334
+          },
+          "joint_pass_rate": 0.9407552083333334,
+          "joint_interval_coverage": 0.9453125,
+          "evidence_pointer": "final_metrics.test"
+        },
+        "scope_rule": "In-range inputs and absence of a matching failure flag do not certify local accuracy. All three predictions remain available; corresponding evaluator confirmation is required for final recommendations."
+      },
+      "known_limitations": [
+        {
+          "id": "fixed_P4_L4_energy",
+          "scope": "challenge fixed_P4_L4; exact pump_power_W=4 and gain_length_m=4",
+          "affected_targets": ["compressed_energy_nJ"],
+          "n": 128,
+          "status": "energy_tolerance_target_failed",
+          "energy_pass_rate": 0.0859375,
+          "other_target_observed_pass_rates": {
+            "compressed_duration_fs": 1.0,
+            "compressed_peak_power_MW": 1.0
+          },
+          "interpretation": "8.59% is the fraction within tolerance, not the size of each prediction error. No energy correction is applied; duration and peak predictions are not disabled or guaranteed.",
+          "evidence_pointer": "final_metrics.challenge.groups.fixed_P4_L4"
+        },
+        {
+          "id": "challenge_joint",
+          "scope": "V4 challenge512: outer boundary, fixed hardware slice, corner neighborhood",
+          "affected_targets": ["joint_all_three"],
+          "n": 512,
+          "status": "joint_tolerance_target_failed",
+          "joint_pass_rate": 0.650390625,
+          "interpretation": "Aggregate challenge evidence is not an accuracy guarantee or a per-input failure classification.",
+          "evidence_pointer": "final_metrics.challenge.metrics"
+        },
+        {
+          "id": "pump_4_6_observed_bin",
+          "scope": "Observed main-test bin 4 <= pump_power_W < 6 W",
+          "affected_targets": ["compressed_energy_nJ"],
+          "n": 557,
+          "status": "observed_subgroup_shortfall_not_a_region_ban",
+          "energy_pass_rate": 0.8976660682226212,
+          "interpretation": "A diagnostic lead only: does not establish that the whole pump interval is unusable, nor certify its complement.",
+          "evidence_pointer": "final_metrics.test.input_bins.pump_power_W_bin2"
+        },
+        {
+          "id": "challenge_interval_coverage",
+          "scope": "Frozen V4 joint multiplicative intervals on challenge512",
+          "affected_targets": ["joint_interval_all_three"],
+          "n": 512,
+          "status": "nominal_coverage_not_transferable_to_challenge",
+          "joint_interval_coverage": 0.478515625,
+          "interpretation": "Nominal 95% is not a per-design, fixed-slice, optimization-candidate or GMMNLSE guarantee.",
+          "evidence_pointer": "final_metrics.challenge.intervals"
+        }
+      ]
+    }
+  }
+}
